@@ -1,22 +1,22 @@
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, SafeAreaView, Platform, Modal} from 'react-native';
 import { Card, Title, Paragraph } from 'react-native-paper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList, Recipe } from '../pages/types'; // adjust path
 
-// Define Recipe type
-type Recipe = {
-  meal_type: string;
-  img_src: string;
-  recipe_name: string;
-  total_time: string;
-  calorie: string;
-  ingredients: string;
-  directions: string;
-};
+import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
+import AppLoading from 'expo-app-loading';
+
+
+type NavigationProp = StackNavigationProp<RootStackParamList, 'RecipeDetail'>;
 
 
 const HomeScreen = () => {
+  const navigation = useNavigation<NavigationProp>();
+
   const [input, setInput] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [filteredList, setFilteredList] = useState<string[]>([]);
@@ -26,6 +26,12 @@ const HomeScreen = () => {
     'egg', 'banana', 'apple', 'milk', 'flour', 'sugar', 'cheese'
   ]);
 
+
+  const [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_600SemiBold,
+    Poppins_700Bold,
+  });
 
   // Filter ingredient list when input changes
   const handleInputChange = (text: string) => {
@@ -60,7 +66,7 @@ const removeIngredient = (item: string) => {
   // Fetch recipes from backend
   const fetchRecipes = async () => {
   try {
-  const response = await fetch('https://c81c-136-158-32-235.ngrok-free.app/predict', {
+  const response = await fetch('https://6f7c-136-158-32-235.ngrok-free.app/predict', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -123,152 +129,298 @@ const toggleFavorite = (recipeName: string) => {
   };
 
   return (
-    <FlatList
-      ListHeaderComponent={
-        <>
-          <Text style={styles.header}>Find your food</Text>
+  <SafeAreaView style={styles.safeArea}>
+    
+  <FlatList
+    ListHeaderComponent={
+      <>
+        <Text style={styles.header}>Find your food</Text>
 
-          <View style={styles.searchContainer}>
-            <TextInput
-              style={styles.textInput}
-              placeholder="Search or pick ingredient"
-              value={input}
-              onChangeText={handleInputChange}
-            />
-            <TouchableOpacity onPress={() => setDropdownVisible(!dropdownVisible)}>
-              <Ionicons name="chevron-down" size={24} />
-            </TouchableOpacity>
-          </View>
+        {/* Search Input and Dropdown */}
+        <View style={styles.searchContainer}>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Search or pick ingredient"
+            value={input}
+            onChangeText={handleInputChange}
+          />
+          <TouchableOpacity
+            onPress={() => setDropdownVisible(!dropdownVisible)}
+            style={styles.icon}
+          >
+            <Ionicons name="chevron-down" size={24} />
+          </TouchableOpacity>
 
           {dropdownVisible && filteredList.length > 0 && (
-            <View style={{ maxHeight: 200 }}>
+            <View style={styles.dropdown}>
               <FlatList
                 data={filteredList}
                 keyExtractor={(item) => item}
-                style={styles.dropdown}
                 renderItem={({ item }) => (
-                  <TouchableOpacity onPress={() => handleSelect(item)} style={styles.dropdownItem}>
+                  <TouchableOpacity
+                    onPress={() => handleSelect(item)}
+                    style={styles.dropdownItem}
+                  >
                     <Text>{item}</Text>
                   </TouchableOpacity>
                 )}
               />
             </View>
           )}
+        </View>
 
-          <View style={styles.chipContainer}>
-            {selectedIngredients.map((ingredient, index) => (
-              <View key={index.toString()} style={styles.chip}>
-                <Text>{ingredient}</Text>
-                <TouchableOpacity onPress={() => removeIngredient(ingredient)}>
-                  <Ionicons name="close-circle" size={16} color="red" style={{ marginLeft: 5 }} />
-                </TouchableOpacity>
-              </View>
-            ))}
-          </View>
+        {/* Ingredient Chips */}
+        <View style={styles.chipContainer}>
+          {selectedIngredients.map((ingredient, index) => (
+            <View key={index.toString()} style={styles.chip}>
+              <Text>{ingredient}</Text>
+              <TouchableOpacity onPress={() => removeIngredient(ingredient)}>
+                <Ionicons
+                  name="close"
+                  size={16}
+                  color="red"
+                  style={{ marginLeft: 5 }}
+                />
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
 
-          <View style={styles.confirmButtonContainer}>
-            <TouchableOpacity onPress={handleSubmit} style={styles.confirmButton}>
-              <Text style={styles.confirmButtonText}>Confirm</Text>
-            </TouchableOpacity>
-          </View>
-        </>
-      }
-      data={recipes}
-      keyExtractor={(item, index) => index.toString()}
-      contentContainerStyle={styles.container}
-      renderItem={({ item }) => (
-            <Card style={styles.card}>
-      <Card.Cover source={{ uri: item.img_src }} />
-      <Card.Content>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Title>{item.recipe_name}</Title>
-          <TouchableOpacity onPress={() => toggleFavorite(item.recipe_name)}>
-            <Ionicons
-              name={favorites.includes(item.recipe_name) ? 'heart' : 'heart-outline'}
-              size={24}
-              color="red"
-            />
+        {/* Confirm Button */}
+        <View style={styles.confirmButtonContainer}>
+          <TouchableOpacity onPress={handleSubmit} style={styles.confirmButton}>
+            <Text style={styles.confirmButtonText}>Confirm</Text>
           </TouchableOpacity>
         </View>
-        <Paragraph>{`Meal Type: ${item.meal_type}`}</Paragraph>
-        <Paragraph>{`Time: ${item.total_time}`}</Paragraph>
-        <Paragraph>{`Calories: ${item.calorie}`}</Paragraph>
-        <Paragraph>{`Ingredients: ${item.ingredients}`}</Paragraph>
-        <Paragraph>{`Directions: ${item.directions.substring(0, 100)}...`}</Paragraph>
-      </Card.Content>
-    </Card>
+      </>
+    }
+    data={recipes}
+    keyExtractor={(item, index) => index.toString()}
+    contentContainerStyle={styles.cardListContainer}
+    renderItem={({ item }) => (
+      <TouchableOpacity
+        onPress={() => navigation.navigate('RecipeDetail', { recipe: item })}
+      >
+        <Card style={styles.card}>
+          <Card.Cover
+            source={{ uri: item.img_src }}
+            style={{ borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
+          />
+          <Card.Content style={{ paddingVertical: 8, paddingHorizontal: 12 }}>
+            {/* Recipe Name */}
+            <Title style={{ marginBottom: 4, fontWeight: 'bold' }}>{item.recipe_name}</Title>
 
-      )}
-    />
+            {/* Time, Calories, Heart */}
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons
+                  name="time"
+                  size={16}
+                  color="#4CA635"
+                  style={{ marginRight: 4 }}
+                />
+                <Paragraph style={{ marginRight: 16 }}>{item.total_time}</Paragraph>
+
+                <Ionicons
+                  name="flame"
+                  size={16}
+                  color="red"
+                  style={{ marginRight: 4 }}
+                />
+                <Paragraph>{`${item.calorie} kcal`}</Paragraph>
+              </View>
+
+              <TouchableOpacity onPress={() => toggleFavorite(item.recipe_name)}>
+                <Ionicons
+                  name={
+                    favorites.includes(item.recipe_name)
+                      ? 'heart'
+                      : 'heart-outline'
+                  }
+                  size={24}
+                  color="red"
+                />
+              </TouchableOpacity>
+            </View>
+          </Card.Content>
+        </Card>
+      </TouchableOpacity>
+    )}
+  />
+</SafeAreaView>
+
   );
 };
 
 
 const styles = StyleSheet.create({
+
   container: {
     padding: 10,
   },
   header: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: 'bold',
-    textAlign: 'center',
+    textAlign: 'left',
+    paddingTop:  30,
     marginBottom: 20,
+    color: '#4CA635',
+    paddingHorizontal: 16,
+
   },
+  cardListContainer: {
+  paddingBottom: 16,
+},
+
+safeArea: {
+  flex: 1,
+  backgroundColor: '#fff',
+  paddingTop: Platform.OS === 'android' ? 25 : 0,
+  paddingHorizontal: 5,
+},
+
   searchContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
+    position: 'relative',
+    marginHorizontal: 0,
+    marginTop: 10,
+      paddingHorizontal: 16,
+
   },
   textInput: {
-    flex: 1,
+    height: 50,
     borderWidth: 1,
+    borderColor: 'white',
+    paddingLeft: 10,
+    paddingRight: 35, // space for the icon
     borderRadius: 5,
-    padding: 10,
+    backgroundColor: '#EEF9EB',
+
   },
+  icon: {
+    position: 'absolute',
+    right: 30,
+    top: 15,
+  },
+dropdown: {
+  position: 'absolute',
+  top: 55,
+  alignSelf: 'center',
+  width: '100%', // or a fixed value like 300
+  backgroundColor: '#fff',
+  borderRadius: 10,
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 4,
+  elevation: 4,
+  zIndex: 10,
+  maxHeight: 180,
+  marginTop: -5,
+},
+
+
+dropdownItem: {
+  paddingVertical: 12,
+  paddingHorizontal: 20,
+  borderBottomWidth: 1,
+  borderBottomColor: '#f0f0f0',
+  backgroundColor: '#fff',
+
+},
   chipContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginVertical: 10,
+      paddingHorizontal: 16,
+
+
   },
   chip: {
-    backgroundColor: '#e0e0e0',
+    backgroundColor: 'white',
+    borderColor: '#4CA635',
+    borderWidth: 1,
     margin: 5,
-    padding: 10,
-    borderRadius: 20,
+    padding: 7,
+    borderRadius: 10,
     flexDirection: 'row',
     alignItems: 'center',
   },
-  dropdown: {
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingVertical: 5,
-  },
-  dropdownItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
+ 
   confirmButtonContainer: {
     alignItems: 'center',
     marginTop: 20,
+
   },
   confirmButton: {
-    backgroundColor: '#007BFF',
+    backgroundColor: '#4CA635',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+    marginBottom: 20, // 👈 This adds space between the button and the next card
+
   },
   confirmButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontFamily: 'Poppins_400Regular', // Add here
+
   },
-  cardContainer: {
-    marginTop: 20,
-  },
-  card: {
-    marginBottom: 20,
-  },
+card: {
+  marginVertical: 10,
+  padding: 10,
+  borderRadius: 10,
+  backgroundColor: '#fff',
+  elevation: 2,
+},
+
+cardRow: {
+  flexDirection: 'row',
+  alignItems: 'flex-start',
+},
+
+cardImage: {
+  width: 100,
+  height: 10,
+  borderRadius: 8,
+  marginRight: 10,
+},
+
+cardContent: {
+  flex: 1,
+  flexDirection: 'column',
+  marginLeft: -10
+},
+
+cardHeader: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: 2, // Reduced from 5
+},
+
+cardText: {
+  fontSize: 14,
+  color: '#555',
+  marginBottom: 2, // Add this if not present to control spacing
+},
+
+recipeName: {
+  fontSize: 16,
+  fontWeight: 'bold',
+  flexShrink: 1,
+  color: '#4CA635',
+    fontFamily: 'Poppins_400Regular',
+
+},
+
+
+
 });
 
 export default HomeScreen;

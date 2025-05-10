@@ -1,12 +1,13 @@
-// src/navigation/RootNavigator.tsx
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 import Login from '../pages/Login';
 import Signup from '../pages/Signup';
 import BottomTabs from './BottomTabs';
+import RecipeDetail from '../pages/Recipe';
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { RootStackParamList } from '../pages/types'; // adjust path if needed
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator<RootStackParamList>();
 
 export default function RootNavigator() {
   return (
@@ -15,7 +16,9 @@ export default function RootNavigator() {
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Signup" component={Signup} />
         <Stack.Screen name="MainTabs" component={BottomTabs} />
+        <Stack.Screen name="RecipeDetail" component={RecipeDetail} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
+
