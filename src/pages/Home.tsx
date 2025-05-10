@@ -103,6 +103,17 @@ const removeIngredient = (item: string) => {
 
 };
 
+const [favorites, setFavorites] = useState<string[]>([]);
+
+const toggleFavorite = (recipeName: string) => {
+  setFavorites(prev =>
+    prev.includes(recipeName)
+      ? prev.filter(name => name !== recipeName)
+      : [...prev, recipeName]
+  );
+};
+
+
   const handleSubmit = () => {
     if (selectedIngredients.length > 0) {
       fetchRecipes();
@@ -166,17 +177,27 @@ const removeIngredient = (item: string) => {
       keyExtractor={(item, index) => index.toString()}
       contentContainerStyle={styles.container}
       renderItem={({ item }) => (
-        <Card style={styles.card}>
-          <Card.Cover source={{ uri: item.img_src }} />
-          <Card.Content>
-            <Title>{item.recipe_name}</Title>
-            <Paragraph>{`Meal Type: ${item.meal_type}`}</Paragraph>
-            <Paragraph>{`Time: ${item.total_time}`}</Paragraph>
-            <Paragraph>{`Calories: ${item.calorie}`}</Paragraph>
-            <Paragraph>{`Ingredients: ${item.ingredients}`}</Paragraph>
-            <Paragraph>{`Directions: ${item.directions.substring(0, 100)}...`}</Paragraph>
-          </Card.Content>
-        </Card>
+            <Card style={styles.card}>
+      <Card.Cover source={{ uri: item.img_src }} />
+      <Card.Content>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Title>{item.recipe_name}</Title>
+          <TouchableOpacity onPress={() => toggleFavorite(item.recipe_name)}>
+            <Ionicons
+              name={favorites.includes(item.recipe_name) ? 'heart' : 'heart-outline'}
+              size={24}
+              color="red"
+            />
+          </TouchableOpacity>
+        </View>
+        <Paragraph>{`Meal Type: ${item.meal_type}`}</Paragraph>
+        <Paragraph>{`Time: ${item.total_time}`}</Paragraph>
+        <Paragraph>{`Calories: ${item.calorie}`}</Paragraph>
+        <Paragraph>{`Ingredients: ${item.ingredients}`}</Paragraph>
+        <Paragraph>{`Directions: ${item.directions.substring(0, 100)}...`}</Paragraph>
+      </Card.Content>
+    </Card>
+
       )}
     />
   );
