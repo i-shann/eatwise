@@ -1,20 +1,234 @@
 // src/pages/Login.tsx
-import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { Button, Image, StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
+
+const { height } = Dimensions.get('window');
 
 export default function Login() {
   const navigation = useNavigation<any>();
+  const handleSignup = () => {
+    navigation.navigate("Signup");
+  };
 
-  return (
-    <View style={styles.container}>
-      <Text>Login Page</Text>
-      <Button title="Log In" onPress={() => navigation.navigate('MainTabs')} />
-      <Button title="Go to Signup" onPress={() => navigation.navigate('Signup')} />
-    </View>
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+
+
+    const handleLoginTab = () => {
+      navigation.navigate("Login"); // navigate to Login screen
+    };
+
+    const handleSignupTab = () => {
+      navigation.navigate("Signup"); // navigate to Signup screen
+    };
+
+
+    const handleLogin = () => {
+      if (!email || !password) {
+        Alert.alert('Error', 'Please fill in all fields');
+        return;
+      }
+      Alert.alert('Success', `Logged in as ${email}`);
+      navigation.navigate('MainTabs');
+    };
+
+    return (
+      <View style={styles.container}>
+          <View  style={styles.backBox } >
+              <Image source={require('../images/header.jpg')}
+                style ={styles.headerImage}
+              />
+                  <View style={styles.greenTab}>
+                    {/*  greentab overlay */}
+                  </View>
+
+          {/*  backbox */}
+          </View>
+
+      <View style={styles.content}>
+          <View style={styles.Upperbutton} >
+                {/* Sign in and sign up button on the upper part*/}
+                <TouchableOpacity style={[styles.button, {marginRight:10, backgroundColor: 'white',  elevation: 10, 
+                            }]} onPress={handleLoginTab}>
+                  <Text style={[styles.buttonText, {color: '#4CA635'}]}>Log In</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.button} onPress={handleSignupTab}>
+                  <Text style={styles.buttonText}>Sign Up</Text>
+                </TouchableOpacity>
+          {/*Upperbuttons*/}
+          </View> 
+
+          <View style={styles.formContainer}>
+                <View style={styles.inputContainer}>
+                    <TextInput
+                      style={styles.input}
+                        placeholder="Email"
+                        value={email}
+                        onChangeText={setEmail}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                    />
+                </View>
+
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Password"
+                        value={password}
+                        onChangeText={setPassword}
+                        secureTextEntry={!showPassword}
+                    />
+
+          <TouchableOpacity onPress={() => setShowPassword(prev => !prev)}>
+            <Ionicons name = {showPassword ? "eye" : "eye-off"} size={25} color={"gray"} />
+          </TouchableOpacity>
+                </View>
+        {/*form container*/}
+        </View > 
+
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Log In</Text>
+          </TouchableOpacity>
+        {/*content*/}
+      </View> 
+
+        <Image source={require('../images/fruit.png')} /*footer*/
+        style ={styles.footerImage}
+      />
+  </View> 
+
+  
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+
+  // The green tab overlay
+  greenTab: {
+    position: 'absolute',
+    width: '100%',
+    height: height * 0.45, // taller image for cropping
+    backgroundColor: 'rgba(76, 166, 53, 0.6)',  // green
+    borderRadius: 30,
+    zIndex: 10,
+    elevation: 5,
+  },
+
+  backBox:{
+    width: Dimensions.get('window').width,
+    height: 280,
+    overflow: 'hidden',
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    zIndex: 0,
+  },
+  
+  footerImage:{
+    width: '50%',
+    height: 300, // taller image for cropping
+    bottom: -50,
+    transform: [{rotate: '-90 deg'}],
+    position: 'absolute',
+    marginLeft: '40%',
+
+  },
+
+  headerImage:{
+  width: '100%',
+  height: height * 0.45, // taller image for cropping
+  marginTop: -height * 0.09, // shift up to center image content
+  },
+
+  container: {
+    flex: 1,
+    position:'relative',
+    backgroundColor: "white", // background of the whole screen
+  },
+
+  background: {
+    width: Dimensions.get('window').width,
+    height: height * 0.3,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    paddingHorizontal: 30,
+    marginBottom: -50,
+  },
+
+  content: {//front box
+    /*width: Dimensions.get('window').width,*/
+    width: Dimensions.get('window').width * 0.85,
+    borderRadius:30,
+    backgroundColor: 'white',
+    marginTop: 5,
+    height: '40%',
+    alignItems: 'center',
+    paddingTop: 42,
+    marginLeft: 30,
+    zIndex: 10,
+    position: 'absolute',
+    top: height * 0.2,
+    shadowColor:"black",
+    elevation: 10, //shadow
+  },
+  
+  formContainer: {
+    width: Dimensions.get('window').width,
+    paddingHorizontal: 30,
+    alignItems: 'center',
+    marginTop: 35,  
+  },
+
+  inputContainer: {
+    borderBottomWidth: 2,
+    borderBottomColor: '#ccc',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    marginBottom: 10,
+    width: 250,
+    
+  },
+
+  inputEmail: {
+    flex: 1, // Takes remaining space
+    paddingVertical: 10, 
+    marginLeft: 10, // Adds spacing between icon and text
+},
+
+  input: {
+    flex: 1,
+    paddingVertical: 10,
+    marginLeft: 10,
+  },
+
+  Upperbutton:{
+    flexDirection: 'row',
+    padding: 15,
+    width: '70%',
+    marginTop: -50,
+  },
+  
+  button: {
+    backgroundColor: '#4CA635',
+    padding: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 40,
+    width: '50%',
+  },
+
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+
+  signinText: {
+    fontWeight: 'bold',
+    marginLeft: 5,
+    color: 'orange',
+  },
 });
