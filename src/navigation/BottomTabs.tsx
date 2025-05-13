@@ -27,8 +27,9 @@ export default function BottomTabs() {
         tabBarInactiveTintColor: 'gray',
       })}
     >
-      <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Progress" component={Progress} />
+      <Tab.Screen name="Home" component={Home} options={{headerShown : false}} />
+      
+      <Tab.Screen name="Progress" component={Progress} options={{headerShown : false}}/>
       <Tab.Screen name="Favorite" component={Favorite} />
       <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
