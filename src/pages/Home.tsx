@@ -6,7 +6,6 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList, Recipe } from '../pages/types'; // adjust path
-import { useFavoritesStore } from '../pages/useFavoritesStore';
 
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
 import AppLoading from 'expo-app-loading';
@@ -138,7 +137,7 @@ const removeIngredient = (item: string) => {
   // Fetch recipes from backend
   const fetchRecipes = async () => {
   try {
-  const response = await fetch('https://213b-136-158-32-235.ngrok-free.app/predict', {
+  const response = await fetch('https://b102-112-204-106-209.ngrok-free.app/predict', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -380,12 +379,10 @@ const toggleFavorite = (recipeName: string) => {
                 <Paragraph>{`${item.calorie} kcal`}</Paragraph>
               </View>
 
-              <TouchableOpacity onPress={() => toggleFavorite(item)}>
+              <TouchableOpacity onPress={() => toggleFavorite(item.recipe_name)}>
                 <Ionicons
                   name={
-                    favorites.some(
-                      f => f.recipe_name === item.recipe_name
-                    )
+                    favorites.includes(item.recipe_name)
                       ? 'heart'
                       : 'heart-outline'
                   }
