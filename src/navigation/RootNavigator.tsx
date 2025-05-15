@@ -33,7 +33,8 @@ export default function RootNavigator() {
         <Stack.Screen name="MainTabs" component={BottomTabs} />
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="EditBodyStatus" component={EditBodyStatus} />
-        
+        <Stack.Screen name="RecipeDetail" component={RecipeDetail} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
