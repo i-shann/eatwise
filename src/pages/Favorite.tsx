@@ -1,3 +1,4 @@
+// Favorite.tsx
 import React from 'react';
 import {
   View,
@@ -14,15 +15,19 @@ import { useFavoritesStore } from '../pages/useFavoritesStore';
 type FavoriteBoxProps = {
   label: string;
   image: string;
+  onRemove: () => void;
 };
 
-const FavoriteBox: React.FC<FavoriteBoxProps> = ({ label, image }) => {
+const FavoriteBox: React.FC<FavoriteBoxProps> = ({ label, image, onRemove }) => {
   return (
     <View style={styles.box}>
       <Image source={{ uri: image }} style={styles.image} />
       <Text style={styles.label}>{label}</Text>
       <TouchableOpacity
-        onPress={() => Alert.alert('This is a favorite item')}
+        onPress={() => {
+          onRemove();
+          Alert.alert('Removed from favorites');
+        }}
         style={styles.icon}
       >
         <Fontisto name="favorite" size={28} color="green" />
@@ -32,7 +37,7 @@ const FavoriteBox: React.FC<FavoriteBoxProps> = ({ label, image }) => {
 };
 
 export default function Favorite() {
-  const { favorites } = useFavoritesStore();
+  const { favorites, removeFavorite } = useFavoritesStore();
 
   return (
     <View style={styles.container}>
@@ -40,7 +45,11 @@ export default function Favorite() {
         data={favorites}
         keyExtractor={(item) => item.recipe_name}
         renderItem={({ item }) => (
-          <FavoriteBox label={item.recipe_name} image={item.img_src} />
+          <FavoriteBox
+            label={item.recipe_name}
+            image={item.img_src}
+            onRemove={() => removeFavorite(item.recipe_name)}
+          />
         )}
         ListEmptyComponent={<Text>No favorites yet.</Text>}
       />
@@ -60,7 +69,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '70%',
+    width: '95%',
     height: 80,
     paddingHorizontal: 20,
     marginVertical: 10,
@@ -80,8 +89,8 @@ const styles = StyleSheet.create({
   },
   label: {
     flex: 1,
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 15,
+    fontWeight: '400',
     color: 'black',
   },
   icon: {
