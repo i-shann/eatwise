@@ -17,6 +17,7 @@ export default function RootNavigator() {
         <Stack.Screen name="Signup" component={Signup} />
         <Stack.Screen name="MainTabs" component={BottomTabs} />
         <Stack.Screen name="RecipeDetail" component={RecipeDetail} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
