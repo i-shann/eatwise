@@ -17,9 +17,6 @@ type NavigationProp = StackNavigationProp<RootStackParamList, 'RecipeDetail'>;
 
 const HomeScreen = () => {
   const navigation = useNavigation<NavigationProp>();
-    const { favorites, toggleFavorite } = useFavoritesStore(); // ✅ Correct usage inside component
-  
-
   const [selectedMeal, setSelectedMeal] = useState('');
   const [input, setInput] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -141,7 +138,7 @@ const removeIngredient = (item: string) => {
   // Fetch recipes from backend
   const fetchRecipes = async () => {
   try {
-  const response = await fetch('https://4e0c-112-204-99-221.ngrok-free.app/predict', {
+  const response = await fetch('https://213b-136-158-32-235.ngrok-free.app/predict', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -197,6 +194,18 @@ const removeIngredient = (item: string) => {
   setRecipes([]);
 }
 };
+
+const [favorites, setFavorites] = useState<string[]>([]);
+
+const toggleFavorite = (recipeName: string) => {
+  setFavorites(prev =>
+    prev.includes(recipeName)
+      ? prev.filter(name => name !== recipeName)
+      : [...prev, recipeName]
+  );
+};
+
+
 
   const handleSubmit = () => {
     if (selectedIngredients.length > 0) {

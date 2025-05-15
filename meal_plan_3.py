@@ -59,7 +59,8 @@ features = tfidf.get_feature_names_out()
 # Display the DataFrame and features
 print(data_dtm.head())
 print(features[:10])  # Display the first 10 features as a sample
-
+all_ingredients = sorted(features)
+print("ingredients", all_ingredients)
 # Get the TF-IDF values for the first recipe (index 0)
 recipe_index = 0
 tfidf_values_for_recipe = data_dtm.iloc[recipe_index]
