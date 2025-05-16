@@ -6,6 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList, Recipe } from '../pages/types'; // adjust path
+import { useFavoritesStore } from '../pages/useFavoritesStore';
 
 import { useFonts, Poppins_400Regular, Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
 import AppLoading from 'expo-app-loading';
@@ -14,8 +15,10 @@ import AppLoading from 'expo-app-loading';
 type NavigationProp = StackNavigationProp<RootStackParamList, 'RecipeDetail'>;
 
 
-const HomeScreen = () => {
+const HomeScreen = () => {  
   const navigation = useNavigation<NavigationProp>();
+  const { favorites, toggleFavorite } = useFavoritesStore(); // ✅ Correct usage inside component
+
   const [selectedMeal, setSelectedMeal] = useState('');
   const [input, setInput] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -137,7 +140,7 @@ const removeIngredient = (item: string) => {
   // Fetch recipes from backend
   const fetchRecipes = async () => {
   try {
-  const response = await fetch('https://b102-112-204-106-209.ngrok-free.app/predict', {
+  const response = await fetch('https://39c7-136-158-32-235.ngrok-free.app/predict', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -194,15 +197,8 @@ const removeIngredient = (item: string) => {
 }
 };
 
-const [favorites, setFavorites] = useState<string[]>([]);
 
-const toggleFavorite = (recipeName: string) => {
-  setFavorites(prev =>
-    prev.includes(recipeName)
-      ? prev.filter(name => name !== recipeName)
-      : [...prev, recipeName]
-  );
-};
+
 
 
 
@@ -379,10 +375,12 @@ const toggleFavorite = (recipeName: string) => {
                 <Paragraph>{`${item.calorie} kcal`}</Paragraph>
               </View>
 
-              <TouchableOpacity onPress={() => toggleFavorite(item.recipe_name)}>
+                <TouchableOpacity onPress={() => toggleFavorite(item)}>
                 <Ionicons
                   name={
-                    favorites.includes(item.recipe_name)
+                    favorites.some(
+                      f => f.recipe_name === item.recipe_name
+                    )
                       ? 'heart'
                       : 'heart-outline'
                   }
