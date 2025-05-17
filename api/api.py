@@ -44,14 +44,14 @@ def predict():
     age = 20
     gender = 'female'
     activity_level = 'moderately active'
-    meal_type = 'snacks'
+    meal_type = data.get('meal')
     user_ingredients = data.get('ingredients')
     
     tdee = calculate_calories(height_cm, weight_kg, gender, activity_level, age)
     print("Received ingredients:", user_ingredients)
 
     # Get result from your multi_ingredient_recommendations function
-    result = multi_ingredient_recommendations(*user_ingredients, meal_type=meal_type, tdee=tdee)
+    result, target_meal_calories = multi_ingredient_recommendations(*user_ingredients, meal_type=meal_type, tdee=tdee)
     
     import numpy as np
 
@@ -66,7 +66,7 @@ def predict():
 
     cleaned = clean_suggestions(result)
     # Return response as JSON
-    return jsonify({"user": name, "suggestions": cleaned, "tdee" : user_ingredients})
+    return jsonify({"user": name, "suggestions": cleaned, "tdee" : user_ingredients, "calorie" : target_meal_calories})
 
 
 
@@ -338,7 +338,7 @@ def categorize_meal_type(cuisine_path):
     
     # Fallback
     else:
-        return 'unknown'
+        return 'lunch'
 
 
 
@@ -423,6 +423,6 @@ def multi_ingredient_recommendations(*ingredients, meal_type=None, tdee, top_n=5
         recipe_suggestions.append(recipe_data)
 
 # Now ready to send to API
-    return (recipe_suggestions)
+    return (recipe_suggestions, target_meal_calories)
 
 

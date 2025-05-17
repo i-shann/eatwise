@@ -16,18 +16,18 @@ export default function BottomTabs() {
         tabBarIcon: ({ color, size }) => {
           let iconName: any;
 
-          if (route.name === 'Home') iconName = 'home';
+          if (route.name === 'Discover') iconName = 'compass';
           else if (route.name === 'Progress') iconName = 'bar-chart';
           else if (route.name === 'Favorite') iconName = 'heart';
           else if (route.name === 'Profile') iconName = 'person';
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: 'tomato',
+        tabBarActiveTintColor: '#4CA635',
         tabBarInactiveTintColor: 'gray',
       })}
     >
-      <Tab.Screen name="Home" component={Home} options={{headerShown : false}} />
+      <Tab.Screen name="Discover" component={Home} options={{headerShown : false}} />
       
       <Tab.Screen name="Progress" component={Progress} options={{headerShown : false}}/>
       <Tab.Screen name="Favorite" component={Favorite} />
