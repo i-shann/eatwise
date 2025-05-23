@@ -1,19 +1,34 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
+import { BodyContext } from '../context/UserBodyContext';
+import { calculateDailyCalories } from '../utils/bodyCalculations';
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
 export default function Progress() {
+  const { bodyData } = useContext(BodyContext);
+
+  const weight = parseFloat(bodyData?.weight || '0');
+  const height = parseFloat(bodyData?.height || '0');
+  const age = parseInt(bodyData?.age || '0', 10);
+  const gender = bodyData?.gender || 'Female';
+  const activityLevel = bodyData?.activityLevel || 'Sedentary';
+
+  const dailyCalories =
+    weight > 0 && height > 0 && age > 0
+      ? calculateDailyCalories(weight, height, age, gender, activityLevel)
+      : 0;
+
   const calorieData = {
     labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    datasets: [{ data: [1800, 2000, 1900, 2100, 2000, 2200, 2000] }],
+    datasets: [{ data: [dailyCalories, 0, 0, 0, 0, 0, 0] }],
   };
 
   const weightData = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    datasets: [{ data: [70, 69.5, 69, 68.8, 68.5, 68, 67.5, 67.2, 67, 66.8, 66.5, 66] }],
+    datasets: [{ data: [weight, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }],
   };
 
   const chartConfig = {
@@ -27,7 +42,6 @@ export default function Progress() {
 
   return (
     <View style={styles.root}>
-      {/* Green Square Background */}
       <View style={styles.greenSquare} />
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -77,7 +91,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    height: screenHeight / 2.5, // covers upper section of screen
+    height: screenHeight / 2.5,
     width: '100%',
     backgroundColor: '#4CA635',
   },
@@ -91,10 +105,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-  fontWeight: 'bold',
-  color: 'white',
-  marginBottom: 16,
-  paddingTop: 40, // Adjust as needed
+    fontWeight: 'bold',
+    color: 'white',
+    marginBottom: 16,
+    paddingTop: 40,
   },
   header: {
     fontSize: 18,

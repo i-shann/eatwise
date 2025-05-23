@@ -140,7 +140,7 @@ const removeIngredient = (item: string) => {
   // Fetch recipes from backend
   const fetchRecipes = async () => {
   try {
-  const response = await fetch('https://ce8a-112-204-105-37.ngrok-free.app/predict', {
+  const response = await fetch('https://b92a-175-176-20-93.ngrok-free.app/predict', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
