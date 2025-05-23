@@ -140,7 +140,7 @@ const removeIngredient = (item: string) => {
   // Fetch recipes from backend
   const fetchRecipes = async () => {
   try {
-  const response = await fetch('https://39c7-136-158-32-235.ngrok-free.app/predict', {
+  const response = await fetch('https://ce8a-112-204-105-37.ngrok-free.app/predict', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -160,7 +160,7 @@ const removeIngredient = (item: string) => {
 
   // Parse the response as JSON
   const result = await response.json();
-
+7324-112-204-106-209
   // Log the API response for debugging
   console.log('API Response:', result);
   console.log(result.user, result.ingredient)

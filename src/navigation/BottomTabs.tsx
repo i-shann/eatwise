@@ -30,7 +30,7 @@ export default function BottomTabs() {
       <Tab.Screen name="Discover" component={Home} options={{headerShown : false}} />
       
       <Tab.Screen name="Progress" component={Progress} options={{headerShown : false}}/>
-      <Tab.Screen name="Favorite" component={Favorite} />
+      <Tab.Screen name="Favorite" component={Favorite} options={{headerShown : false}}/>
       <Tab.Screen name="Profile" component={Profile} options = {{headerShown: false}} />
     </Tab.Navigator>
   );

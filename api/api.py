@@ -347,9 +347,10 @@ recipe_df['meal_type'] = recipe_df['Cuisine'].apply(categorize_meal_type)
 
 print(recipe_df['meal_type'])
 
-def multi_ingredient_recommendations(*ingredients, meal_type=None, tdee, top_n=5):
-    if not ingredients:
-        return []
+def multi_ingredient_recommendations(*ingredients, meal_type=None, tdee=None, top_n=10):
+    recipe_suggestions = []
+    target_meal_calories = None  # Default initialization
+
 
     # Meal percentage mapping
     meal_percentages = {
@@ -424,5 +425,3 @@ def multi_ingredient_recommendations(*ingredients, meal_type=None, tdee, top_n=5
 
 # Now ready to send to API
     return (recipe_suggestions, target_meal_calories)
-
-

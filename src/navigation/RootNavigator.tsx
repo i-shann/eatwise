@@ -7,7 +7,8 @@ import Signup from '../pages/Signup';
 import BottomTabs from './BottomTabs';
 import Profile from '../pages/Profile';
 import EditBodyStatus from '../pages/EditBodyStatus';
-import RecipeDetail from '../pages/Recipe'; // You had this in HEAD part, include if still needed
+import RecipeDetail from '../pages/Recipe';
+import Favorite from '../pages/Favorite';
 
 // Define the types for the routes in the stack navigator
 export type RootStackParamList = {
@@ -16,7 +17,8 @@ export type RootStackParamList = {
   MainTabs: undefined;
   Profile: undefined;
   EditBodyStatus: undefined;
-   // add if you're using this screen
+  RecipeDetail: undefined;
+  Favorite: undefined;  // <-- Added Favorite here
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -26,7 +28,7 @@ export default function RootNavigator() {
     <NavigationContainer>
       <Stack.Navigator 
         initialRouteName="Login" 
-        screenOptions={{ headerShown: false }}
+        screenOptions={{ headerShown: false }} // header hidden on all screens
       >
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Signup" component={Signup} />
@@ -34,8 +36,13 @@ export default function RootNavigator() {
         <Stack.Screen name="RecipeDetail" component={RecipeDetail} />
         <Stack.Screen name="Profile" component={Profile} />
         <Stack.Screen name="EditBodyStatus" component={EditBodyStatus} />
+<Stack.Screen
+  name="Favorite"
+  component={Favorite}
+  options={{ headerShown: false }} // <- still works too
+/>      
 
-      </Stack.Navigator>
+</Stack.Navigator>
     </NavigationContainer>
   );
 }
